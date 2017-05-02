@@ -1,0 +1,33 @@
+# depslib dependency file v1.0
+1493713974 source:/root/WorkingSpace/PacketCapture/PacketManager..cpp
+	"PacketManager.h"
+
+1493713901 /root/WorkingSpace/PacketCapture/PacketManager.h
+	<stdio.h>
+	<stdlib.h>
+	<signal.h>
+	<unistd.h>
+	<errno.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<netinet/if_ether.h>
+	<linux/ip.h>
+	<fcntl.h>
+	<netdb.h>
+	<setjmp.h>
+	<time.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<sys/time.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<arpa/inet.h>
+	<signal.h>
+	<unistd.h>
+	<time.h>
+	<pcap/pcap.h>
+
+1493706081 source:/root/WorkingSpace/PacketCapture/Main.cpp
+	"PacketManager.h"
+
