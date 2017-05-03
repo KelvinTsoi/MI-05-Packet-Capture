@@ -73,23 +73,35 @@ int main(int argc, char** argv)
 {
     if (geteuid() != 0)
     {
-        fprintf(stderr, "error: you must be root to run this\n");
-        return -1;
+        fprintf(stderr, "Error: you must be root to run this program\r\n");
+        exit(1);
     }
 
     if (argc < 2)
+    {
         PrintHelp();
+        exit(1);
+    }
     else
     {
         PrintVersionInfo(argc, argv);
         PrintUsage(argc, argv);
 
         if (strcmp(argv[1], "--auto") == 0)
-            PacketManager::Instance()->StartCapture(AUTO);
+        {
+            InterfaceMonitored = INTERFACE_AUTO;
+        }
         else if (strcmp(argv[1], "--loop") == 0)
-            PacketManager::Instance()->StartCapture(LOOP);
+        {
+            InterfaceMonitored = INTERFACE_LOOP;
+        }
         else
+        {
             PrintHelp();
+            exit(1);
+        }
+
+        PacketManager::Instance()->StartCapture(InterfaceMonitored);
     }
 
     return 0;

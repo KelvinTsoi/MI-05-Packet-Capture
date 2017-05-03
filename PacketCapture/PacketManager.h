@@ -28,68 +28,120 @@
 
 #include <pcap/pcap.h>
 
-#define PATH                   "save.pcap"      /*  */
-#define CAPTURE_LENGTH         4096
-#define AUTO                   100
-#define LOOP                   101
+#define PATH                   "capture[%s].pcap"      /* File name to store capture information */
+#define CAPTURE_LENGTH          4096                   /* Maximum length of Capture Packet */
 
+
+//Monitoring Mode
+typedef enum
+{
+    INTERFACE_AUTO = 0,
+    INTERFACE_LOOP = 1,
+}INTERFACE;
+
+extern INTERFACE InterfaceMonitored;
 
 class PacketManager
 {
 public:
 
-    int StartCapture(int mode);
+    /**
+     * Summary: Start Capture Entrance
+     * Parameters:
+     *  mode: Differentiate monitoring mode
+     * Return: Return zero if function success, other values signify function error code
+     */
+    int StartCapture(INTERFACE mode);
 
+    /**
+     * Summary: Singleton Pattern
+     * Return: Return a static pointer of Class PacketManager
+     */
     static PacketManager* Instance();
 
 protected:
 
+    /**
+     * Summary: Constructor
+     */
     PacketManager();
 
 private:
 
-    static PacketManager* pThis;
+    static PacketManager* pThis;        /* A static pointer of Class PacketManager used for calling back*/
 
+    /**
+     * Summary: Call back function of [pcap_loop]
+     * Parameters:
+     *  user: Id of Packet
+     *  packet_header: Head information of Packet
+     *  packet_content: Content of Packet
+     */
     void HandleProc(u_char * user, const struct pcap_pkthdr * packet_header, const u_char * packet_content);
 
+
+    /**
+     * Summary: Call back function of Semaphore
+     * Parameters:
+     *  sig: Signal value
+     */
     void sigActProc(int sig);
 
+
+    /**
+     * Summary: Execution function of [pcap_loop]
+     * Parameters:
+     *  sig: Signal value
+     */
     static void sigActCallBackProc(int sig);
 
+
+    /**
+     * Summary: Execute function of Semaphore
+     * Parameters:
+     *  user: Id of Packet
+     *  packet_header: Head information of Packet
+     *  packet_content: Content of Packet
+     */
     static void HandleCallBackProc(u_char * user, const struct pcap_pkthdr * packet_header, const u_char * packet_content);
 
-    static PacketManager* _instance;    /*  */
+    static PacketManager* _instance;    /* A static pointer of Class PacketManager used for Singleton Pattern */
+
+    /**
+     * Summary: Get Current Time in static format
+     * Parameters:
+     *  gTime: String to store the time, use for preventing the repetition of file name
+     */
+    void GetDate(char* gTime);
 
 private:
 
-    struct sigaction act;           /*  */
+    struct sigaction act;           /* Semaphore Registration Information */
 
-    char *device_name;              /*  */
-    char ebuf[PCAP_ERRBUF_SIZE];    /*  */
+    char *device_name;              /* Store device name */
+    char ebuf[PCAP_ERRBUF_SIZE];    /* Error Message */
 
-    int pcap_net;
+    int cap_len;                    /* Capture data length */
+    int dev_flag;                   /* Promiscuous mode */
+    int dev_time;                   /* Set timeout */
 
-    int cap_len;                    /*  */
-    int dev_flag;                   /*  */
-    int dev_time;                   /*  */
+    pcap_t *pd;                     /* Packet capture description words */
 
-    pcap_t *pd;                     /*  */
+    struct bpf_program fcode;       /* Capturing rules */
+    bpf_u_int32 netmaskp;           /* NetMask */
+    bpf_u_int32 netp;               /* Network number */
+    char *netmask;                  /* Transformed NetMask */
+    char *net;                      /* Transformed Network number */
+    struct in_addr addr;            /* As the transformation of excess */
 
-    struct bpf_program fcode;       /*  */
-    bpf_u_int32 netmaskp;           /*  */
-    bpf_u_int32 netp;               /*  */
-    char *netmask;                  /*  */
-    char *net;                      /*  */
-    struct in_addr addr;            /*  */
+    int pcap_link;                  /* Type of data link layer */
 
-    int pcap_link;                  /*  */
+    pcap_dumper_t *pd_t;            /* File to save captured packets */
+    pcap_t *pd_tp;                  /* File to open captured packets */
+    FILE *pcapfile;                 /* File Pointer */
+    int pcapno;                     /* File descriptor */
 
-    pcap_dumper_t *pd_t;            /*  */
-    pcap_t *pd_tp;                  /*  */
-    FILE *pcapfile;                 /*  */
-    int pcapno;                     /*  */
-
-    struct pcap_stat stat;          /*  */
+    struct pcap_stat stat;          /* Captured packet statistics */
 };
 
 
