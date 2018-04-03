@@ -58,11 +58,9 @@ void PrintVersionInfo(int argc, char** argv)
             memset(&t, 0, sizeof (t));
             strptime(date, "%b %d %Y", &t);
             t.tm_mon += 1;
-            printf("\r\n"
-                   "Application Name: packetcapture\r\n"
+            printf("Application Name: packetcapture\r\n"
                    "Application Version: %s\r\n"
-                   "Compile Date: %04d-%02d-%2d %s\r\n"
-                   "\r\n",
+                   "Compile Date: %04d-%02d-%2d %s\r\n",
                    SOFTWARE_VERSION, t.tm_year + 1900, t.tm_mon, t.tm_mday, __TIME__);
             exit(0);
         }
@@ -77,7 +75,7 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    if (argc < 2)
+    if (argc != 2)
     {
         PrintHelp();
         exit(1);
